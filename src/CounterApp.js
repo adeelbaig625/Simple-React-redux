@@ -13,21 +13,60 @@ import {
   ScrollView,
   View,
   Text,
+  TextInput,
   StatusBar,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 
 import {connect} from 'react-redux'
 
-const CounterApp=({counter,increaseCounter,decreaseCounter}) => {
+const CounterApp=({todos,Add,Delete}) => {
+  const [id,setid]=React.useState(null);
+  const displayids=()=>
+  {
+    if(todos.length>0)
+    {
+      return todos.map(item=>
+        {
+         return <Text>{item}</Text>
+        })
+       
+    }
+    
+    
+  }
   return (
     <>
       <View style={{flex:1,backgroundColor:'#fff',display:'flex',justifyContent:'center',alignItems:'center'}}>
-          <View style={{display:'flex',flexDirection:'row',width:200,justifyContent:'space-around'}}>
-            <TouchableOpacity onPress={() => increaseCounter()}><Text>Increase</Text></TouchableOpacity>
-            <Text>{counter}</Text>
-            <TouchableOpacity  onPress={() => decreaseCounter()}><Text>Decrease</Text></TouchableOpacity>
-          </View>
+        <TextInput value={id} placeholder={'Enter number'}keyboardType="numeric" onChangeText={setid}/>
+         
+            <TouchableOpacity onPress={() =>
+            {
+              if(id)
+              {
+                Add(Number(id))
+                setid('')
+              }
+              else 
+              Alert.alert('no number!')
+               
+            }}
+               ><Text>Submit</Text></TouchableOpacity>
+         
+            <TouchableOpacity  onPress={() => 
+            {
+              if(id)
+              {
+                Delete(Number(id))
+                setid('')
+              }
+              else 
+              Alert.alert('no number!')
+              
+            }}><Text>Delete</Text></TouchableOpacity>
+          
+          {displayids()}
       </View>
     </>
   );
@@ -35,14 +74,14 @@ const CounterApp=({counter,increaseCounter,decreaseCounter}) => {
 const mapStateToProps=(state)=>
 {
     return {
-        counter:state.counter
+        todos:state.todos
     }
 }
 const mapDispatchToProps=(dispatch)=>
 {
     return{
-        increaseCounter:()=>dispatch({type:'INCREASE_COUNTER'}),
-        decreaseCounter:()=>dispatch({type:'DECREASE_COUNTER'})
+        Add:(item)=>dispatch({type:'Add_ELEMENT',payload:item}),
+        Delete:(item)=>dispatch({type:'Delete_ELEMENT',payload:item}),   
     }
 }
 
